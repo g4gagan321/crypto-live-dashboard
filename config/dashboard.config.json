@@ -57,8 +57,10 @@
   "economicEvents": {
     "usCpiNext": "2026-08-12T12:30:00Z",
     "fomcNext": "2026-07-29T18:00:00Z",
-    "bitcoinHalvingNext": "2028-04-20T00:00:00Z"
+    "bitcoinHalvingNext": "2028-04-20T00:00:00Z",
+    "rbiPolicyNext": "2026-08-05T04:30:00Z"
   },
+  "earningsCalendar": [],
   "worldClocks": [
     { "label": "MUMBAI", "timeZone": "Asia/Kolkata" },
     { "label": "GIFT CITY", "timeZone": "Asia/Kolkata" },

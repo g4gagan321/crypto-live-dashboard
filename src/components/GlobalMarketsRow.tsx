@@ -12,8 +12,8 @@ export function GlobalMarketsRow() {
   const { data: markets, isStale } = useGlobalMarkets();
 
   return (
-    <div className="flex h-full items-center gap-4 overflow-hidden bg-terminal-panel px-3 font-mono text-[11px]">
-      <span className="flex-none tracking-widest text-terminal-dim">GLOBAL MARKETS</span>
+    <div className="flex h-full items-center gap-4 overflow-hidden bg-terminal-panel px-3 font-mono text-xs">
+      <span className="flex-none font-bold tracking-widest text-terminal-text">GLOBAL MARKETS</span>
       {isStale && <span className="flex-none text-terminal-amber">stale</span>}
       <div className="flex min-w-0 flex-1 items-center gap-4 overflow-hidden whitespace-nowrap">
         {!markets ? (
@@ -21,11 +21,11 @@ export function GlobalMarketsRow() {
         ) : (
           markets.map((m) => (
             <span key={m.label} className="flex-none">
-              <span className="text-terminal-dim">{m.label}</span>{' '}
-              <span className="mono-nums text-terminal-text">
+              <span className="font-bold text-terminal-text">{m.label}</span>{' '}
+              <span className="mono-nums font-bold text-terminal-text">
                 {m.unit === 'pct' ? `${m.price.toFixed(2)}%` : m.price.toLocaleString('en-US', { maximumFractionDigits: 2 })}
               </span>{' '}
-              <span className={m.changePct >= 0 ? 'text-terminal-up' : 'text-terminal-down'}>
+              <span className={`font-bold ${m.changePct >= 0 ? 'text-terminal-up' : 'text-terminal-down'}`}>
                 {m.changePct >= 0 ? '+' : ''}
                 {m.changePct.toFixed(2)}%
               </span>

@@ -3,7 +3,7 @@
 import { useNews, useWhaleAlerts, useEtfFlows } from '@/hooks/useNews';
 import { useCountdown } from '@/hooks/useCountdown';
 import { config } from '@/lib/config';
-import { formatUsd, formatCompactNumber } from '@/lib/format';
+import { formatCompactNumber, getNextNseWeeklyExpiryIso } from '@/lib/format';
 
 export function BottomBar() {
   const { data: news } = useNews();
@@ -27,6 +27,11 @@ export function BottomBar() {
   const combined = [...headlines, ...etfHeadlines, ...whaleHeadlines];
   const tickerText = combined.join('     •     ');
 
+  // Recomputed on every render (cheap) rather than memoized once, so the
+  // "next Tuesday" target naturally rolls forward once the current expiry
+  // passes — BottomBar re-renders every ~45s on the news poll anyway.
+  const nextExpiryIso = getNextNseWeeklyExpiryIso();
+
   return (
     <div className="flex h-full items-stretch divide-x divide-terminal-border">
       <div className="flex flex-none items-center bg-terminal-danger px-3">
@@ -41,9 +46,10 @@ export function BottomBar() {
       </div>
 
       <div className="flex flex-none items-center gap-6 bg-terminal-panel px-4">
+        <CountdownChip label="RBI POLICY" isoDate={config.economicEvents.rbiPolicyNext} />
+        <CountdownChip label="NIFTY EXPIRY" isoDate={nextExpiryIso} />
         <CountdownChip label="US CPI" isoDate={config.economicEvents.usCpiNext} />
         <CountdownChip label="FOMC" isoDate={config.economicEvents.fomcNext} />
-        <CountdownChip label="BTC HALVING" isoDate={config.economicEvents.bitcoinHalvingNext} />
       </div>
     </div>
   );

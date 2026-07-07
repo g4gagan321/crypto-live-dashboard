@@ -15,7 +15,7 @@ import type { MoverItem } from '@/app/api/movers/route';
  */
 export function RightColumn() {
   return (
-    <div className="grid h-full grid-rows-[1fr_1fr_auto_1fr] gap-2">
+    <div className="grid h-full grid-rows-[0.8fr_0.8fr_auto_1.5fr] gap-2">
       <MoversPanel title="TOP GAINERS" kind="gainers" />
       <MoversPanel title="TOP LOSERS" kind="losers" />
       <VixGaugePanel />
@@ -94,16 +94,16 @@ function NewsPanel() {
 
   return (
     <Panel title="MARKET NEWS" className="min-h-0 overflow-hidden">
-      <div className="flex h-full flex-col gap-1.5 overflow-hidden px-2.5 py-1.5 font-mono text-[10px]">
+      <div className="flex h-full flex-col gap-2 overflow-hidden px-2.5 py-1.5 font-mono text-[11px]">
         {!news || news.length === 0 ? (
           <span className="text-terminal-dim">Loading headlines...</span>
         ) : (
-          news.slice(0, 5).map((n) => (
+          news.slice(0, 4).map((n) => (
             <div key={n.id} className="flex gap-2 leading-snug">
               <span className="flex-none text-terminal-dim">
                 {new Date(n.publishedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false })}
               </span>
-              <span className="truncate text-terminal-text">
+              <span className="line-clamp-2 text-terminal-text">
                 <span className="text-terminal-dim">{n.source.toUpperCase()}:</span> {n.title}
               </span>
             </div>

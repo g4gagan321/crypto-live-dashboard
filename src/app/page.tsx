@@ -44,7 +44,7 @@ export default function DashboardPage() {
         </ErrorBoundary>
 
         <ErrorBoundary label="MAIN BODY">
-          <div className="grid h-full min-h-0 grid-cols-[280px_1fr_300px] gap-2">
+          <div className="grid h-full min-h-0 grid-cols-[300px_620px_1fr] gap-2">
             <ErrorBoundary label="LEFT COLUMN">
               <LeftColumn />
             </ErrorBoundary>

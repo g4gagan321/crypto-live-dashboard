@@ -111,7 +111,9 @@ export interface DashboardConfig {
     usCpiNext: string;
     fomcNext: string;
     bitcoinHalvingNext: string;
+    rbiPolicyNext: string;
   };
+  earningsCalendar?: { symbol: string; label: string; dateIso: string }[];
   worldClocks: { label: string; timeZone: string }[];
   obsMode: {
     hideCursor: boolean;

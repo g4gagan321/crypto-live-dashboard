@@ -18,11 +18,17 @@ export interface MarketBreadth {
 export interface MoversData {
   gainers: MoverItem[];
   losers: MoverItem[];
-  /** All 49 constituents we could fetch, for the heatmap grid. */
+  /** All 49 Nifty 50 constituents we could fetch, for the heatmap grid. */
   all: MoverItem[];
-  /** Real counts computed from this same Nifty 50 batch — not full-market
-   *  NSE breadth (that needs a licensed feed), but an honest, live number. */
+  /** Real counts computed from the Nifty 50 batch — not full-market NSE
+   *  breadth (that needs a licensed feed), but an honest, live number. */
   breadth: MarketBreadth;
+  /** Same real-count approach, but across Nifty 50 + Nifty Next 50 (~100
+   *  large/mid caps) as a broader-than-just-top-50 proxy. Still not true
+   *  whole-market (~2000 stock) breadth — NSE doesn't publish that for free
+   *  in a way we can hit reliably from a serverless deploy — so this is
+   *  labeled "NIFTY 100" in the UI, not "Total Market". */
+  breadthNifty100: MarketBreadth;
 }
 
 // Nifty 50 constituents (index composition changes periodically — NSE
@@ -36,6 +42,19 @@ const NIFTY50_CONSTITUENTS = [
   'INDUSINDBK', 'INFY', 'JSWSTEEL', 'KOTAKBANK', 'LT', 'M&M', 'MARUTI', 'NESTLEIND', 'NTPC',
   'ONGC', 'POWERGRID', 'RELIANCE', 'SBILIFE', 'SHRIRAMFIN', 'SBIN', 'SUNPHARMA', 'TCS',
   'TATACONSUM', 'TATAMOTORS', 'TATASTEEL', 'TECHM', 'TITAN', 'TRENT', 'ULTRACEMCO', 'WIPRO', 'LTIM'
+];
+
+// Nifty Next 50 (approximate — same reconstitution caveat as above; check
+// against https://www.niftyindices.com/indices/equity/broad-based-indices/nifty-next-50
+// occasionally). Combined with NIFTY50_CONSTITUENTS this is the "Nifty 100"
+// breadth proxy — still ~100 of NSE's ~2000 listed stocks, not the whole tape.
+const NIFTY_NEXT_50_CONSTITUENTS = [
+  'ABB', 'ADANIENSOL', 'ADANIGREEN', 'ADANIPOWER', 'AMBUJACEM', 'BAJAJHLDNG', 'BANKBARODA',
+  'BERGEPAINT', 'BOSCHLTD', 'CANBK', 'CHOLAFIN', 'COLPAL', 'DABUR', 'DIVISLAB', 'DLF', 'GAIL',
+  'GICRE', 'GODREJCP', 'HAVELLS', 'HAL', 'ICICIGI', 'ICICIPRULI', 'IOC', 'INDIGO', 'IRFC',
+  'JINDALSTEL', 'JIOFIN', 'LODHA', 'LUPIN', 'MARICO', 'MOTHERSON', 'NHPC', 'NAUKRI', 'PIDILITIND',
+  'PIIND', 'PFC', 'PGHH', 'PNB', 'POLYCAB', 'RECLTD', 'SIEMENS', 'SRF', 'SHREECEM', 'TATAPOWER',
+  'TORNTPHARM', 'TVSMOTOR', 'UNITDSPR', 'VBL', 'VEDL', 'ZOMATO', 'ZYDUSLIFE'
 ];
 
 let cache: { data: MoversData; ts: number } | null = null;
@@ -62,15 +81,10 @@ async function fetchOne(symbol: string): Promise<MoverItem | null> {
   }
 }
 
-async function fetchAll(): Promise<MoversData> {
-  const settled = await Promise.all(NIFTY50_CONSTITUENTS.map(fetchOne));
-  const valid = settled.filter((m): m is MoverItem => m !== null);
-  if (valid.length === 0) throw new Error('All Nifty 50 constituent quotes failed');
-  const sorted = [...valid].sort((a, b) => b.changePct - a.changePct);
-
-  // Real breadth computed from this same batch. Flat threshold of 0.03% avoids
-  // labeling normal quote-to-quote noise as "unchanged" vs a genuine flat print.
-  const breadth = valid.reduce(
+function computeBreadth(items: MoverItem[]): MarketBreadth {
+  // Flat threshold of 0.03% avoids labeling normal quote-to-quote noise as
+  // "unchanged" vs a genuine flat print.
+  return items.reduce(
     (acc, m) => {
       if (m.changePct > 0.03) acc.advances += 1;
       else if (m.changePct < -0.03) acc.declines += 1;
@@ -79,12 +93,24 @@ async function fetchAll(): Promise<MoversData> {
     },
     { advances: 0, declines: 0, unchanged: 0 }
   );
+}
+
+async function fetchAll(): Promise<MoversData> {
+  const [settled50, settledNext50] = await Promise.all([
+    Promise.all(NIFTY50_CONSTITUENTS.map(fetchOne)),
+    Promise.all(NIFTY_NEXT_50_CONSTITUENTS.map(fetchOne))
+  ]);
+  const valid50 = settled50.filter((m): m is MoverItem => m !== null);
+  const validNext50 = settledNext50.filter((m): m is MoverItem => m !== null);
+  if (valid50.length === 0) throw new Error('All Nifty 50 constituent quotes failed');
+  const sorted = [...valid50].sort((a, b) => b.changePct - a.changePct);
 
   return {
     gainers: sorted.slice(0, 5),
     losers: sorted.slice(-5).reverse(),
-    all: valid,
-    breadth
+    all: valid50,
+    breadth: computeBreadth(valid50),
+    breadthNifty100: computeBreadth([...valid50, ...validNext50])
   };
 }
 

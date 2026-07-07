@@ -8,10 +8,10 @@ const config: Config = {
         // Terminal-style palette. Editable brand accent lives in config/dashboard.config.json,
         // and is applied at runtime via CSS variables set in layout.tsx.
         terminal: {
-          // Light, CNBC/print-style palette — white desk, dark ink, strong
-          // green/red accents so price direction still reads instantly on
-          // a broadcast feed.
-          bg: '#f3f4f6',
+          // Hybrid palette: black outer chrome (bg — the frame/gaps between
+          // panels) with light/white panel cards for readability. Strong
+          // green/red accents so price direction still reads instantly.
+          bg: '#050608',
           panel: '#ffffff',
           panel2: '#fafafa',
           border: '#e2e4e9',

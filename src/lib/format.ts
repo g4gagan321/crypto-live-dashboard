@@ -51,6 +51,38 @@ export function formatClock(date: Date | null, timeZone?: string): string {
   }).format(date);
 }
 
+/**
+ * NSE moved single-stock/index weekly derivatives expiry to Tuesday
+ * (effective 1 Sept 2025, SEBI-mandated one-weekly-expiry-per-exchange
+ * rule). Computes the next Tuesday 15:30 IST, rolling over automatically —
+ * doesn't account for exchange holidays (expiry shifts to the prior
+ * trading day when Tuesday is a holiday), which is a known simplification.
+ */
+export function getNextNseWeeklyExpiryIso(now: Date = new Date()): string {
+  const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+  // Shift the epoch by the IST offset, then read it with UTC getters — this
+  // yields IST wall-clock components regardless of the host machine's own
+  // timezone, since we're operating on the absolute epoch, not local time.
+  const shifted = new Date(now.getTime() + IST_OFFSET_MS);
+  const day = shifted.getUTCDay(); // 0 Sun ... 2 Tue ... 6 Sat, in IST terms
+  const hour = shifted.getUTCHours();
+  const minute = shifted.getUTCMinutes();
+
+  let daysUntilTue = (2 - day + 7) % 7;
+  const pastCloseToday = day === 2 && (hour > 15 || (hour === 15 && minute >= 30));
+  if (daysUntilTue === 0 && pastCloseToday) daysUntilTue = 7;
+
+  const shiftedTargetMs = Date.UTC(
+    shifted.getUTCFullYear(),
+    shifted.getUTCMonth(),
+    shifted.getUTCDate() + daysUntilTue,
+    15,
+    30,
+    0
+  );
+  return new Date(shiftedTargetMs - IST_OFFSET_MS).toISOString();
+}
+
 export function formatCountdown(targetIso: string): { text: string; expired: boolean } {
   const target = new Date(targetIso).getTime();
   const diff = target - Date.now();
