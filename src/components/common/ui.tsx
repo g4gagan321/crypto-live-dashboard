@@ -75,3 +75,47 @@ export function Sparkline({ points, positive }: { points: number[]; positive: bo
     </svg>
   );
 }
+
+/**
+ * A full-bleed filled area chart meant to occupy the entire body of a
+ * price tile (not just a thin strip), so a tile with only a handful of
+ * ticks still reads as "a live chart" rather than empty whitespace. Falls
+ * back to a flat baseline while the rolling price buffer is still filling
+ * up right after page load.
+ */
+export function AreaSpark({ points, positive }: { points: number[]; positive: boolean }) {
+  const w = 100;
+  const h = 40;
+  const color = positive ? 'var(--brand-primary)' : 'var(--brand-danger)';
+  const gradientId = `areaspark-${positive ? 'up' : 'down'}`;
+
+  if (points.length < 2) {
+    return (
+      <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" className="h-full w-full">
+        <line x1={0} y1={h - 1} x2={w} y2={h - 1} stroke={color} strokeOpacity={0.25} strokeWidth={1} />
+      </svg>
+    );
+  }
+
+  const min = Math.min(...points);
+  const max = Math.max(...points);
+  const range = max - min || 1;
+  const step = w / (points.length - 1);
+  const linePath = points
+    .map((p, i) => `${i === 0 ? 'M' : 'L'} ${(i * step).toFixed(2)},${(h - ((p - min) / range) * h).toFixed(2)}`)
+    .join(' ');
+  const areaPath = `${linePath} L ${w},${h} L 0,${h} Z`;
+
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" className="h-full w-full">
+      <defs>
+        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity={0.28} />
+          <stop offset="100%" stopColor={color} stopOpacity={0.02} />
+        </linearGradient>
+      </defs>
+      <path d={areaPath} fill={`url(#${gradientId})`} stroke="none" />
+      <path d={linePath} fill="none" stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    </svg>
+  );
+}

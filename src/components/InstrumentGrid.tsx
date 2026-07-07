@@ -4,7 +4,7 @@ import { useQuotes } from '@/hooks/useQuotes';
 import { useNseQuotes } from '@/hooks/useNseQuotes';
 import { useCryptoData } from '@/hooks/useCryptoData';
 import { usePriceHistory, usePriceFlash } from '@/hooks/usePriceMotion';
-import { ChangeBadge, Sparkline, StaleDot } from '@/components/common/ui';
+import { ChangeBadge, AreaSpark, StaleDot } from '@/components/common/ui';
 import type { QuoteItem } from '@/types';
 
 /**
@@ -49,30 +49,38 @@ function Tile({ label, quote, stale }: { label: string; quote?: QuoteItem; stale
   const price = !unavailable ? quote?.price : undefined;
   const history = usePriceHistory(price);
   const flash = usePriceFlash(price);
+  const positive = (quote?.changePct ?? 0) >= 0;
 
   return (
     <div
-      className={`rounded panel-border bg-terminal-panel/80 p-3 flex flex-col justify-between ${
+      className={`relative overflow-hidden rounded panel-border bg-terminal-panel flex flex-col justify-between ${
         flash === 'up' ? 'flash-up' : flash === 'down' ? 'flash-down' : ''
       }`}
     >
-      <span className="font-mono text-[10px] tracking-widest text-terminal-dim">{label}</span>
-      {!quote ? (
-        <span className="font-mono text-xs text-terminal-dim">Loading...</span>
-      ) : unavailable ? (
-        <span className="font-mono text-xs text-terminal-amber">Feed unavailable</span>
-      ) : (
-        <div className="flex flex-col gap-1">
-          <span className="mono-nums font-mono text-2xl font-black text-terminal-text">{formatQuote(quote)}</span>
-          <div className="flex items-center justify-between gap-2">
-            <ChangeBadge value={quote.changePct} />
-            <div className="w-16">
-              <Sparkline points={history} positive={quote.changePct >= 0} />
-            </div>
-          </div>
+      {/* Chart fills the whole tile body so there's no dead white space */}
+      {quote && !unavailable && (
+        <div className="absolute inset-0">
+          <AreaSpark points={history} positive={positive} />
         </div>
       )}
-      <StaleDot visible={stale} />
+
+      <div className="relative z-10 flex items-center justify-between px-3 pt-2">
+        <span className="font-mono text-[10px] tracking-widest text-terminal-dim">{label}</span>
+        <StaleDot visible={stale} />
+      </div>
+
+      {!quote ? (
+        <span className="relative z-10 px-3 pb-3 font-mono text-xs text-terminal-dim">Loading...</span>
+      ) : unavailable ? (
+        <span className="relative z-10 px-3 pb-3 font-mono text-xs text-terminal-amber">Feed unavailable</span>
+      ) : (
+        <div className="relative z-10 flex flex-col gap-0.5 px-3 pb-2.5">
+          <span className="mono-nums font-mono text-2xl font-black leading-none text-terminal-text">
+            {formatQuote(quote)}
+          </span>
+          <ChangeBadge value={quote.changePct} />
+        </div>
+      )}
     </div>
   );
 }
@@ -90,30 +98,35 @@ function BitcoinTile({
 }) {
   const history = usePriceHistory(price);
   const flash = usePriceFlash(price);
+  const positive = (changePct ?? 0) >= 0;
 
   return (
     <div
-      className={`rounded panel-border bg-terminal-panel/80 p-3 flex flex-col justify-between ${
+      className={`relative overflow-hidden rounded panel-border bg-terminal-panel flex flex-col justify-between ${
         flash === 'up' ? 'flash-up' : flash === 'down' ? 'flash-down' : ''
       }`}
     >
-      <span className="font-mono text-[10px] tracking-widest text-terminal-dim">BITCOIN ($)</span>
-      {loading || price === undefined ? (
-        <span className="font-mono text-xs text-terminal-dim">Loading...</span>
-      ) : (
-        <div className="flex flex-col gap-1">
-          <span className="mono-nums font-mono text-2xl font-black text-terminal-text">
-            ${price.toLocaleString('en-US', { maximumFractionDigits: 0 })}
-          </span>
-          <div className="flex items-center justify-between gap-2">
-            <ChangeBadge value={changePct ?? 0} />
-            <div className="w-16">
-              <Sparkline points={history} positive={(changePct ?? 0) >= 0} />
-            </div>
-          </div>
+      {!loading && price !== undefined && (
+        <div className="absolute inset-0">
+          <AreaSpark points={history} positive={positive} />
         </div>
       )}
-      <StaleDot visible={stale} />
+
+      <div className="relative z-10 flex items-center justify-between px-3 pt-2">
+        <span className="font-mono text-[10px] tracking-widest text-terminal-dim">BITCOIN ($)</span>
+        <StaleDot visible={stale} />
+      </div>
+
+      {loading || price === undefined ? (
+        <span className="relative z-10 px-3 pb-3 font-mono text-xs text-terminal-dim">Loading...</span>
+      ) : (
+        <div className="relative z-10 flex flex-col gap-0.5 px-3 pb-2.5">
+          <span className="mono-nums font-mono text-2xl font-black leading-none text-terminal-text">
+            ${price.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+          </span>
+          <ChangeBadge value={changePct ?? 0} />
+        </div>
+      )}
     </div>
   );
 }

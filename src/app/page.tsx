@@ -15,7 +15,7 @@ import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 export default function DashboardPage() {
   return (
     <ObsModeProvider>
-      <main className="grid h-screen w-screen grid-rows-[56px_32px_28px_1fr_44px] gap-2 bg-terminal-bg p-2">
+      <main className="grid h-screen w-screen grid-rows-[56px_32px_40px_1fr_44px] gap-2 bg-terminal-bg p-2">
         <ErrorBoundary label="HEADER">
           <Header />
         </ErrorBoundary>

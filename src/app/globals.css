@@ -3,18 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --brand-primary: #00e07a;
-  --brand-danger: #ff3b5c;
-  --brand-amber: #ffb020;
-  --brand-bg: #05070a;
-  --brand-panel: #0b0f16;
+  --brand-primary: #0a8f4e;
+  --brand-danger: #d81f3d;
+  --brand-amber: #b4790a;
+  --brand-bg: #f3f4f6;
+  --brand-panel: #ffffff;
 }
 
 html,
 body {
   height: 100%;
   background: var(--brand-bg);
-  color: #e8edf3;
+  color: #12151a;
   overflow: hidden; /* No scrolling — everything fits on one screen */
 }
 
@@ -46,7 +46,8 @@ body.obs-mode .hover-effect {
 }
 
 .panel-border {
-  border: 1px solid #1c2532;
+  border: 1px solid #e2e4e9;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
 }
 
 .mono-nums {
@@ -68,12 +69,12 @@ body.obs-mode .hover-effect {
 }
 
 .live-dot {
-  box-shadow: 0 0 8px 2px rgba(255, 59, 92, 0.7);
+  box-shadow: 0 0 8px 2px rgba(216, 31, 61, 0.55);
 }
 
 @keyframes flashUp {
   0% {
-    background-color: rgba(0, 224, 122, 0.22);
+    background-color: rgba(10, 143, 78, 0.16);
   }
   100% {
     background-color: transparent;
@@ -82,7 +83,7 @@ body.obs-mode .hover-effect {
 
 @keyframes flashDown {
   0% {
-    background-color: rgba(255, 59, 92, 0.22);
+    background-color: rgba(216, 31, 61, 0.16);
   }
   100% {
     background-color: transparent;
