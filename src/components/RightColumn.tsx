@@ -15,7 +15,7 @@ import type { MoverItem } from '@/app/api/movers/route';
  */
 export function RightColumn() {
   return (
-    <div className="grid h-full grid-rows-[0.8fr_0.8fr_auto_1.5fr] gap-2">
+    <div className="grid h-full grid-rows-[0.8fr_0.8fr_auto_1.5fr] gap-1.5">
       <MoversPanel title="TOP GAINERS" kind="gainers" />
       <MoversPanel title="TOP LOSERS" kind="losers" />
       <VixGaugePanel />
@@ -68,11 +68,11 @@ function VixGaugePanel() {
     <Panel title="INDIA VIX GAUGE" className="min-h-0">
       <div className="flex h-full items-center justify-center gap-3 px-3 py-1">
         <svg viewBox="0 0 100 55" className="h-14 w-24 flex-none">
-          <path d="M 5 50 A 45 45 0 0 1 95 50" fill="none" stroke="#e2e4e9" strokeWidth="8" strokeLinecap="round" />
+          <path d="M 5 50 A 45 45 0 0 1 95 50" fill="none" stroke="#232b38" strokeWidth="8" strokeLinecap="round" />
           <path
             d="M 5 50 A 45 45 0 0 1 95 50"
             fill="none"
-            stroke={value === undefined ? '#e2e4e9' : band?.color === 'text-terminal-up' ? 'var(--brand-primary)' : band?.color === 'text-terminal-amber' ? 'var(--brand-amber)' : 'var(--brand-danger)'}
+            stroke={value === undefined ? '#232b38' : band?.color === 'text-terminal-up' ? 'var(--brand-primary)' : band?.color === 'text-terminal-amber' ? 'var(--brand-amber)' : 'var(--brand-danger)'}
             strokeWidth="8"
             strokeLinecap="round"
             strokeDasharray={`${(angle / 180) * 141.4} 141.4`}

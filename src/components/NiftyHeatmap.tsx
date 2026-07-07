@@ -45,8 +45,7 @@ function HeatCell({ symbol, changePct, price }: { symbol: string; changePct: num
   // completely normal 1% day reads as barely-tinted and the whole grid
   // looks washed out.
   const intensity = Math.min(Math.abs(changePct) / 3, 1);
-  const bg = positive ? `rgba(10, 143, 78, ${0.24 + intensity * 0.66})` : `rgba(216, 31, 61, ${0.24 + intensity * 0.66})`;
-  const lightText = intensity > 0.3;
+  const bg = positive ? `rgba(0, 210, 106, ${0.16 + intensity * 0.6})` : `rgba(255, 77, 87, ${0.16 + intensity * 0.6})`;
 
   return (
     <div
@@ -54,10 +53,10 @@ function HeatCell({ symbol, changePct, price }: { symbol: string; changePct: num
       style={{ backgroundColor: bg }}
       title={price ? `${symbol}: ₹${price.toLocaleString('en-IN')}` : symbol}
     >
-      <span className={`truncate text-[11px] font-bold ${lightText ? 'text-white' : 'text-terminal-text'}`}>
+      <span className="truncate text-[11px] font-bold text-white">
         {symbol}
       </span>
-      <span className={`mono-nums text-[10px] font-semibold ${lightText ? 'text-white' : 'text-terminal-text'}`}>
+      <span className="mono-nums text-[10px] font-semibold text-white">
         {positive ? '+' : ''}
         {changePct.toFixed(2)}%
       </span>

@@ -16,7 +16,7 @@ import type { MarketBreadth } from '@/app/api/movers/route';
  */
 export function LeftColumn() {
   return (
-    <div className="grid h-full grid-rows-4 gap-2">
+    <div className="grid h-full grid-rows-4 gap-1.5">
       <MarketBreadthPanel />
       <FiiDiiPanel />
       <SectorPanel />
@@ -30,7 +30,7 @@ function MarketBreadthPanel() {
 
   return (
     <Panel title="MARKET BREADTH" className="min-h-0">
-      <div className="grid h-full grid-cols-2 gap-2 px-3 py-2">
+      <div className="grid h-full grid-cols-2 gap-1.5 px-3 py-2">
         <BreadthDonut label="NIFTY 50" breadth={movers?.breadth} />
         <BreadthDonut label="NIFTY 100" breadth={movers?.breadthNifty100} />
       </div>
@@ -53,7 +53,7 @@ function BreadthDonut({ label, breadth }: { label: string; breadth?: MarketBread
     <div className="flex flex-col items-center gap-1">
       <span className="font-mono text-[9px] tracking-widest text-terminal-dim">{label}</span>
       <svg viewBox="0 0 70 70" className="h-16 w-16 -rotate-90">
-        <circle cx="35" cy="35" r={r} fill="none" stroke="#e2e4e9" strokeWidth="9" />
+        <circle cx="35" cy="35" r={r} fill="none" stroke="#232b38" strokeWidth="9" />
         {breadth && (
           <>
             <circle
