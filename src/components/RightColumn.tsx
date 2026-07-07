@@ -51,8 +51,8 @@ function MoversList({ list }: { list: MoverItem[] }) {
         list.map((m, i) => (
           <div key={m.symbol} className="flex items-center gap-1.5">
             <span className="w-3 flex-none text-terminal-dim">{i + 1}</span>
-            <span className="flex-1 truncate font-bold text-terminal-text">{m.symbol}</span>
-            <span className={`w-14 flex-none text-right font-bold ${m.changePct >= 0 ? 'text-terminal-up' : 'text-terminal-down'}`}>
+            <span className="flex-1 truncate font-semibold text-terminal-text">{m.symbol}</span>
+            <span className={`w-12 flex-none text-right font-bold ${m.changePct >= 0 ? 'text-terminal-up' : 'text-terminal-down'}`}>
               {m.changePct >= 0 ? '+' : ''}
               {m.changePct.toFixed(2)}%
             </span>
@@ -73,16 +73,16 @@ function MostActivePanel() {
 
   return (
     <Panel title="MOST ACTIVE (BY VALUE)" className="min-h-0 overflow-hidden" right={<span className="font-mono text-[9px] text-terminal-dim">NIFTY 50</span>}>
-      <div className="flex h-full flex-col justify-center gap-1 px-2 py-1 font-mono text-[11px]">
+      <div className="flex h-full flex-col justify-center gap-1 px-2 py-1 font-mono text-[10px]">
         {list.length === 0 ? (
           <span className="px-1 text-terminal-dim">Loading...</span>
         ) : (
           list.map((m, i) => (
             <div key={m.symbol} className="flex items-center gap-2">
-              <span className="w-4 flex-none text-terminal-dim">{i + 1}</span>
-              <span className="flex-1 truncate font-bold text-terminal-text">{m.symbol}</span>
+              <span className="w-3 flex-none text-terminal-dim">{i + 1}</span>
+              <span className="flex-1 truncate font-semibold text-terminal-text">{m.symbol}</span>
               <span className="text-terminal-dim">{m.price ? m.price.toLocaleString('en-IN', { maximumFractionDigits: 2 }) : ''}</span>
-              <span className={`w-14 flex-none text-right font-bold ${m.changePct >= 0 ? 'text-terminal-up' : 'text-terminal-down'}`}>
+              <span className={`w-12 flex-none text-right font-bold ${m.changePct >= 0 ? 'text-terminal-up' : 'text-terminal-down'}`}>
                 {m.changePct >= 0 ? '+' : ''}
                 {m.changePct.toFixed(2)}%
               </span>
