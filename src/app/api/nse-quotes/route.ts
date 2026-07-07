@@ -45,9 +45,10 @@ async function fetchYahooFallback(): Promise<QuoteItem[]> {
   return items;
 }
 
-async function fetchAll(): Promise<QuoteItem[]> {
+async function fetchAll(): Promise<{ items: QuoteItem[]; angelOneStatus: string }> {
   if (!isAngelOneConfigured()) {
-    return fetchYahooFallback();
+    console.error('[AngelOne] Not configured — one or more of ANGELONE_API_KEY / ANGELONE_CLIENT_CODE / ANGELONE_PASSWORD / ANGELONE_TOTP_SECRET is missing in this environment.');
+    return { items: await fetchYahooFallback(), angelOneStatus: 'not-configured' };
   }
   try {
     const quotes = await getIndexQuotes();
@@ -65,9 +66,12 @@ async function fetchAll(): Promise<QuoteItem[]> {
         items.push({ id, label: LABELS[id]!, price: 0, changePct: 0, unit: 'index', source: 'unavailable' });
       }
     }
-    return items;
-  } catch {
-    return fetchYahooFallback();
+    return { items, angelOneStatus: 'ok' };
+  } catch (err) {
+    // Logged (not swallowed) so Vercel's runtime logs show exactly why AngelOne
+    // fell back to Yahoo — auth failures, bad TOTP, network errors, etc.
+    console.error('[AngelOne] Quote fetch failed, falling back to Yahoo:', err instanceof Error ? err.message : err);
+    return { items: await fetchYahooFallback(), angelOneStatus: `error: ${err instanceof Error ? err.message : 'unknown'}` };
   }
 }
 
@@ -76,9 +80,9 @@ export async function GET() {
     if (cache && Date.now() - cache.ts < CACHE_TTL_MS) {
       return NextResponse.json(cache.data);
     }
-    const data = await fetchAll();
-    cache = { data, ts: Date.now() };
-    return NextResponse.json(data);
+    const { items, angelOneStatus } = await fetchAll();
+    cache = { data: items, ts: Date.now() };
+    return NextResponse.json(items, { headers: { 'X-AngelOne-Status': angelOneStatus } });
   } catch (err) {
     if (cache) return NextResponse.json(cache.data, { headers: { 'X-Data-Stale': 'true' } });
     return NextResponse.json({ error: err instanceof Error ? err.message : 'Unknown error' }, { status: 502 });
