@@ -152,7 +152,10 @@ function SectorPanel() {
 
 function SectorRow({ label, changePct }: { label: string; changePct: number }) {
   const positive = changePct >= 0;
-  const widthPct = Math.min(Math.abs(changePct) * 20, 100);
+  // Floor at 4% width so a genuinely tiny move (e.g. +0.06%) still shows as
+  // a visible sliver instead of reading as "no bar at all" — the % label
+  // next to it still carries the precise honest number.
+  const widthPct = Math.max(Math.min(Math.abs(changePct) * 30, 100), 4);
   return (
     <div className="flex items-center gap-2">
       <span className="w-24 flex-none truncate text-terminal-dim">{label}</span>

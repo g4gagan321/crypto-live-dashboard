@@ -52,7 +52,7 @@ function MoversList({ list }: { list: MoverItem[] }) {
           <div key={m.symbol} className="flex items-center gap-1.5">
             <span className="w-3 flex-none text-terminal-dim">{i + 1}</span>
             <span className="flex-1 truncate font-bold text-terminal-text">{m.symbol}</span>
-            <span className={`w-12 flex-none text-right font-bold ${m.changePct >= 0 ? 'text-terminal-up' : 'text-terminal-down'}`}>
+            <span className={`w-14 flex-none text-right font-bold ${m.changePct >= 0 ? 'text-terminal-up' : 'text-terminal-down'}`}>
               {m.changePct >= 0 ? '+' : ''}
               {m.changePct.toFixed(2)}%
             </span>

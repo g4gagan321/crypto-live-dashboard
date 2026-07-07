@@ -107,7 +107,17 @@ async function fetchQuoteBatch(jwt: string, apiKey: string): Promise<Record<stri
   if (res.status === 401) throw Object.assign(new Error('AngelOne session expired'), { code: 401 });
   const json = await res.json();
   if (!res.ok || !json?.data?.fetched) {
-    throw new Error(`AngelOne quote request failed: ${json?.message ?? res.status}`);
+    // AngelOne frequently reports an expired/invalid JWT with HTTP 200 and
+    // an error payload instead of a real 401 — "Invalid Token" being the
+    // most common. Treat that the same as a 401 so getIndexQuotes() forces
+    // a fresh login instead of quietly repeating the same stale token on
+    // every poll (which is what was happening — every request for hours
+    // logged the identical "Invalid Token" error and never recovered).
+    const message = String(json?.message ?? '');
+    if (/invalid token|expired|unauthor/i.test(message)) {
+      throw Object.assign(new Error(`AngelOne session expired: ${message}`), { code: 401 });
+    }
+    throw new Error(`AngelOne quote request failed: ${message || res.status}`);
   }
 
   const bySymboltoken = new Map<string, any>(json.data.fetched.map((q: any) => [q.symbolToken ?? q.symboltoken, q]));
