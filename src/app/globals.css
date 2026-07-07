@@ -65,9 +65,7 @@ body.obs-mode .hover-effect {
 }
 
 .animate-ticker-scroll {
-  /* Was 60s — felt sluggish on a long headline string. 34s keeps it readable
-     without lagging behind fresh headlines. */
-  animation: tickerScroll 34s linear infinite;
+  animation: tickerScroll 100s linear infinite;
 }
 
 .live-dot {
