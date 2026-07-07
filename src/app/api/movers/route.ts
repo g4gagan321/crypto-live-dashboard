@@ -6,11 +6,23 @@ export const revalidate = 0;
 export interface MoverItem {
   symbol: string;
   changePct: number;
+  price?: number;
+}
+
+export interface MarketBreadth {
+  advances: number;
+  declines: number;
+  unchanged: number;
 }
 
 export interface MoversData {
   gainers: MoverItem[];
   losers: MoverItem[];
+  /** All 49 constituents we could fetch, for the heatmap grid. */
+  all: MoverItem[];
+  /** Real counts computed from this same Nifty 50 batch — not full-market
+   *  NSE breadth (that needs a licensed feed), but an honest, live number. */
+  breadth: MarketBreadth;
 }
 
 // Nifty 50 constituents (index composition changes periodically — NSE
@@ -44,7 +56,7 @@ async function fetchOne(symbol: string): Promise<MoverItem | null> {
     const prevClose = meta.previousClose ?? meta.chartPreviousClose ?? price;
     if (!prevClose) return null;
     const changePct = ((price - prevClose) / prevClose) * 100;
-    return { symbol, changePct };
+    return { symbol, changePct, price };
   } catch {
     return null;
   }
@@ -55,9 +67,24 @@ async function fetchAll(): Promise<MoversData> {
   const valid = settled.filter((m): m is MoverItem => m !== null);
   if (valid.length === 0) throw new Error('All Nifty 50 constituent quotes failed');
   const sorted = [...valid].sort((a, b) => b.changePct - a.changePct);
+
+  // Real breadth computed from this same batch. Flat threshold of 0.03% avoids
+  // labeling normal quote-to-quote noise as "unchanged" vs a genuine flat print.
+  const breadth = valid.reduce(
+    (acc, m) => {
+      if (m.changePct > 0.03) acc.advances += 1;
+      else if (m.changePct < -0.03) acc.declines += 1;
+      else acc.unchanged += 1;
+      return acc;
+    },
+    { advances: 0, declines: 0, unchanged: 0 }
+  );
+
   return {
     gainers: sorted.slice(0, 5),
-    losers: sorted.slice(-5).reverse()
+    losers: sorted.slice(-5).reverse(),
+    all: valid,
+    breadth
   };
 }
 
