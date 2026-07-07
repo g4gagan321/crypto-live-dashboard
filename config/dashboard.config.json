@@ -41,7 +41,7 @@
     "cryptoPrices": 15000,
     "globalMarket": 60000,
     "fearGreed": 300000,
-    "news": 90000,
+    "news": 45000,
     "fx": 30000,
     "quotes": 15000,
     "whaleAlerts": 45000,
