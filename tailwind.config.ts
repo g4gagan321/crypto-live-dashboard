@@ -8,20 +8,20 @@ const config: Config = {
         // Terminal-style palette. Editable brand accent lives in config/dashboard.config.json,
         // and is applied at runtime via CSS variables set in layout.tsx.
         terminal: {
-          // Hybrid palette: black outer chrome (bg — the frame/gaps between
-          // panels) with light/white panel cards for readability. Strong
-          // green/red accents so price direction still reads instantly.
-          bg: '#050608',
-          panel: '#ffffff',
-          panel2: '#fafafa',
-          border: '#e2e4e9',
-          up: '#0a8f4e',
-          down: '#d81f3d',
-          danger: '#d81f3d',
-          primary: '#0a8f4e',
-          amber: '#b4790a',
-          text: '#12151a',
-          dim: '#6b7280'
+          // Single cohesive dark surface, matching the reference mockup's
+          // own palette (bg #090B10, cards #121722) — not a black-frame/
+          // white-card hybrid.
+          bg: '#090b10',
+          panel: '#121722',
+          panel2: '#161c26',
+          border: '#232b38',
+          up: '#00d26a',
+          down: '#ff4d57',
+          danger: '#ff4d57',
+          primary: '#00d26a',
+          amber: '#ffc857',
+          text: '#ffffff',
+          dim: '#a8b0be'
         }
       },
       fontFamily: {
