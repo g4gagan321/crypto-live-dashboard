@@ -1,0 +1,77 @@
+{
+  "brand": {
+    "name": "APEX MARKETS",
+    "tagline": "INDIA MARKETS & GLOBAL MACRO DESK",
+    "logoText": "AM",
+    "logoUrl": ""
+  },
+  "theme": {
+    "primaryColor": "#00e07a",
+    "dangerColor": "#ff3b5c",
+    "amberColor": "#ffb020",
+    "backgroundColor": "#05070a",
+    "panelColor": "#0b0f16"
+  },
+  "widgets": {
+    "header": true,
+    "btcHero": true,
+    "tradingViewChart": true,
+    "fearGreedIndex": true,
+    "dominance": true,
+    "keyInstruments": true,
+    "newsTicker": true,
+    "etfFlows": false,
+    "whaleAlerts": false,
+    "economicEvents": true,
+    "countdowns": true,
+    "weather": true,
+    "worldClocks": true,
+    "dxy": false,
+    "gold": true,
+    "silver": true,
+    "oil": true,
+    "indexFutures": false,
+    "us10y": true,
+    "in10y": true,
+    "usdInr": true,
+    "niftyBankniftyGiftnifty": true,
+    "vix": true
+  },
+  "refreshIntervalsMs": {
+    "cryptoPrices": 15000,
+    "globalMarket": 60000,
+    "fearGreed": 300000,
+    "news": 90000,
+    "fx": 30000,
+    "quotes": 15000,
+    "whaleAlerts": 45000,
+    "economicEvents": 3600000,
+    "clock": 1000
+  },
+  "majorCoins": ["bitcoin"],
+  "newsSources": [
+    { "name": "Economic Times Markets", "enabled": true, "rssUrl": "https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms" },
+    { "name": "Moneycontrol", "enabled": true, "rssUrl": "https://www.moneycontrol.com/rss/marketreports.xml" },
+    { "name": "CryptoCompare", "enabled": true }
+  ],
+  "economicEvents": {
+    "usCpiNext": "2026-08-12T12:30:00Z",
+    "fomcNext": "2026-07-29T18:00:00Z",
+    "bitcoinHalvingNext": "2028-04-20T00:00:00Z"
+  },
+  "worldClocks": [
+    { "label": "MUMBAI", "timeZone": "Asia/Kolkata" },
+    { "label": "GIFT CITY", "timeZone": "Asia/Kolkata" },
+    { "label": "SINGAPORE", "timeZone": "Asia/Singapore" },
+    { "label": "DUBAI", "timeZone": "Asia/Dubai" },
+    { "label": "LONDON", "timeZone": "Europe/London" },
+    { "label": "NEW YORK", "timeZone": "America/New_York" }
+  ],
+  "obsMode": {
+    "hideCursor": true,
+    "disableTooltips": true,
+    "disableHoverEffects": true,
+    "disableAnimations": false,
+    "targetResolution": "1920x1080"
+  }
+}
