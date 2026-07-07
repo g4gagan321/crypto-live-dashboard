@@ -38,11 +38,15 @@ export function NiftyHeatmap() {
 
 function HeatCell({ symbol, changePct, price }: { symbol: string; changePct: number; price?: number }) {
   const positive = changePct >= 0;
-  // Scale color intensity so a small move looks pale and a big move looks saturated;
-  // real Nifty 50 single-stock moves rarely exceed ~5% intraday, so that's the ceiling.
-  const intensity = Math.min(Math.abs(changePct) / 5, 1);
-  const bg = positive ? `rgba(10, 143, 78, ${0.18 + intensity * 0.72})` : `rgba(216, 31, 61, ${0.18 + intensity * 0.72})`;
-  const lightText = intensity > 0.35;
+  // Scale color intensity so a small move looks pale and a big move looks
+  // saturated. Most Nifty 50 single-stock daily moves are well under 3%
+  // (a 5%+ move is already an outlier day like the Trent print below), so
+  // the ceiling is set there rather than at a rarer 5%+ move — otherwise a
+  // completely normal 1% day reads as barely-tinted and the whole grid
+  // looks washed out.
+  const intensity = Math.min(Math.abs(changePct) / 3, 1);
+  const bg = positive ? `rgba(10, 143, 78, ${0.24 + intensity * 0.66})` : `rgba(216, 31, 61, ${0.24 + intensity * 0.66})`;
+  const lightText = intensity > 0.3;
 
   return (
     <div

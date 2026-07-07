@@ -12,7 +12,7 @@ export function Panel({
   right?: React.ReactNode;
 }) {
   return (
-    <div className={`panel-border flex flex-col rounded bg-terminal-panel/80 ${className}`}>
+    <div className={`panel-border flex flex-col rounded bg-terminal-panel ${className}`}>
       {title && (
         <div className="flex items-center justify-between border-b border-terminal-border px-3 py-1.5">
           <span className="font-mono text-[11px] font-semibold tracking-widest text-terminal-dim">{title}</span>
