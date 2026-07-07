@@ -7,6 +7,9 @@ export interface MoverItem {
   symbol: string;
   changePct: number;
   price?: number;
+  /** Regular-session traded volume (shares), from the same Yahoo quote —
+   *  used to derive a real "most active by value" list, not an invented one. */
+  volume?: number;
 }
 
 export interface MarketBreadth {
@@ -29,6 +32,9 @@ export interface MoversData {
    *  in a way we can hit reliably from a serverless deploy — so this is
    *  labeled "NIFTY 100" in the UI, not "Total Market". */
   breadthNifty100: MarketBreadth;
+  /** Top 5 Nifty 50 names by traded value (price × volume) today — real,
+   *  computed from the same batch fetch, not a separate/fabricated feed. */
+  mostActive: MoverItem[];
 }
 
 // Nifty 50 constituents (index composition changes periodically — NSE
@@ -75,7 +81,8 @@ async function fetchOne(symbol: string): Promise<MoverItem | null> {
     const prevClose = meta.previousClose ?? meta.chartPreviousClose ?? price;
     if (!prevClose) return null;
     const changePct = ((price - prevClose) / prevClose) * 100;
-    return { symbol, changePct, price };
+    const volume: number | undefined = typeof meta.regularMarketVolume === 'number' ? meta.regularMarketVolume : undefined;
+    return { symbol, changePct, price, volume };
   } catch {
     return null;
   }
@@ -104,13 +111,17 @@ async function fetchAll(): Promise<MoversData> {
   const validNext50 = settledNext50.filter((m): m is MoverItem => m !== null);
   if (valid50.length === 0) throw new Error('All Nifty 50 constituent quotes failed');
   const sorted = [...valid50].sort((a, b) => b.changePct - a.changePct);
+  const byValue = [...valid50]
+    .filter((m) => typeof m.volume === 'number' && typeof m.price === 'number')
+    .sort((a, b) => (b.price! * b.volume!) - (a.price! * a.volume!));
 
   return {
     gainers: sorted.slice(0, 5),
     losers: sorted.slice(-5).reverse(),
     all: valid50,
     breadth: computeBreadth(valid50),
-    breadthNifty100: computeBreadth([...valid50, ...validNext50])
+    breadthNifty100: computeBreadth([...valid50, ...validNext50]),
+    mostActive: byValue.slice(0, 5)
   };
 }
 

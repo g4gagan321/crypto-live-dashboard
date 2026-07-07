@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 let cache: { data: NewsItem[]; ts: number } | null = null;
-const CACHE_TTL_MS = 60000;
+const CACHE_TTL_MS = 30000;
 
 // Lightweight, dependency-free RSS <item> extractor. Indian financial
 // publishers (Economic Times, Moneycontrol, Business Standard, etc.) all

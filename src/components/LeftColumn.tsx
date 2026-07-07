@@ -1,26 +1,26 @@
 'use client';
 
 import { useMovers, useFiiDii, useSectors } from '@/hooks/useMarketPulse';
-import { useCountdown } from '@/hooks/useCountdown';
 import { Panel } from '@/components/common/ui';
-import { config } from '@/lib/config';
 import type { MarketBreadth } from '@/app/api/movers/route';
 
 /**
  * Left column: Market Breadth (real, computed from the Nifty 50 / Nifty 100
  * batches — labeled honestly, not a full-market NSE breadth figure, since
- * that needs a licensed feed), FII/DII net flows, Nifty sector performance
- * bars (Yahoo NSE sector indices), and a manually-configured Earnings
- * Calendar (there's no free, reliable live per-company results feed, so
- * this reads from config/dashboard.config.json instead of fabricating data).
+ * that needs a licensed feed), FII/DII net flows, and Nifty sector
+ * performance bars (Yahoo NSE sector indices).
+ *
+ * There used to be a fourth panel here — a manually-configured Earnings
+ * Calendar — but with no free, reliable live per-company results feed to
+ * automate it, it sat empty most of the time. Dropped rather than kept as
+ * a mostly-blank box; the freed space goes to Sector Performance.
  */
 export function LeftColumn() {
   return (
-    <div className="grid h-full grid-rows-4 gap-1.5">
+    <div className="grid h-full grid-rows-[1fr_1fr_1.4fr] gap-1.5">
       <MarketBreadthPanel />
       <FiiDiiPanel />
       <SectorPanel />
-      <EarningsPanel />
     </div>
   );
 }
@@ -172,38 +172,4 @@ function SectorRow({ label, changePct }: { label: string; changePct: number }) {
 
 function StaleTag() {
   return <span className="font-mono text-[9px] text-terminal-amber">stale</span>;
-}
-
-function EarningsPanel() {
-  const entries = [...(config.earningsCalendar ?? [])]
-    .sort((a, b) => new Date(a.dateIso).getTime() - new Date(b.dateIso).getTime())
-    .slice(0, 3);
-
-  return (
-    <Panel title="EARNINGS CALENDAR" className="min-h-0 overflow-hidden">
-      <div className="flex h-full flex-col justify-center gap-1.5 overflow-hidden px-3 py-1.5 font-mono text-[10px]">
-        {entries.length === 0 ? (
-          <span className="leading-snug text-terminal-dim">
-            No upcoming entries. Add them in config/dashboard.config.json — there&apos;s no free, reliable live
-            per-company results feed, so this list is manually maintained rather than guessed.
-          </span>
-        ) : (
-          entries.map((e) => <EarningsRow key={e.symbol + e.dateIso} symbol={e.symbol} label={e.label} dateIso={e.dateIso} />)
-        )}
-      </div>
-    </Panel>
-  );
-}
-
-function EarningsRow({ symbol, label, dateIso }: { symbol: string; label: string; dateIso: string }) {
-  const { text, expired } = useCountdown(dateIso);
-  return (
-    <div className="flex items-center gap-2">
-      <span className="w-16 flex-none truncate font-bold text-terminal-text">{symbol}</span>
-      <span className="flex-1 truncate text-terminal-dim">{label}</span>
-      <span className={`flex-none font-bold ${expired ? 'text-terminal-up' : 'text-terminal-amber'}`}>
-        {expired ? 'TODAY' : text.split(' ').slice(0, 2).join(' ')}
-      </span>
-    </div>
-  );
 }

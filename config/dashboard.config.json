@@ -6,11 +6,11 @@
     "logoUrl": ""
   },
   "theme": {
-    "primaryColor": "#00e07a",
-    "dangerColor": "#ff3b5c",
-    "amberColor": "#ffb020",
-    "backgroundColor": "#05070a",
-    "panelColor": "#0b0f16"
+    "primaryColor": "#00d26a",
+    "dangerColor": "#ff4d57",
+    "amberColor": "#ffc857",
+    "backgroundColor": "#090b10",
+    "panelColor": "#121722"
   },
   "widgets": {
     "header": true,
@@ -41,9 +41,9 @@
     "cryptoPrices": 15000,
     "globalMarket": 60000,
     "fearGreed": 300000,
-    "news": 45000,
+    "news": 30000,
     "fx": 30000,
-    "quotes": 15000,
+    "quotes": 5000,
     "whaleAlerts": 45000,
     "economicEvents": 3600000,
     "clock": 1000

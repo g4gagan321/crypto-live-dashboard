@@ -15,21 +15,64 @@ import type { MoverItem } from '@/app/api/movers/route';
  */
 export function RightColumn() {
   return (
-    <div className="grid h-full grid-rows-[0.8fr_0.8fr_auto_1.5fr] gap-1.5">
-      <MoversPanel title="TOP GAINERS" kind="gainers" />
-      <MoversPanel title="TOP LOSERS" kind="losers" />
+    <div className="grid h-full grid-rows-[0.85fr_0.85fr_auto_1.8fr] gap-1.5">
+      <MoversPanel />
+      <MostActivePanel />
       <VixGaugePanel />
       <NewsPanel />
     </div>
   );
 }
 
-function MoversPanel({ title, kind }: { title: string; kind: 'gainers' | 'losers' }) {
+/** Gainers and losers side by side in one panel — was two full-height
+ *  panels, which crowded out the News panel below. Same real Nifty 50
+ *  batch, just laid out more compactly. */
+function MoversPanel() {
   const { data: movers } = useMovers();
-  const list: MoverItem[] = movers?.[kind] ?? [];
+  const gainers: MoverItem[] = movers?.gainers ?? [];
+  const losers: MoverItem[] = movers?.losers ?? [];
 
   return (
-    <Panel title={title} className="min-h-0 overflow-hidden" right={<span className="font-mono text-[9px] text-terminal-dim">NIFTY 50</span>}>
+    <Panel title="TOP GAINERS / LOSERS" className="min-h-0 overflow-hidden" right={<span className="font-mono text-[9px] text-terminal-dim">NIFTY 50</span>}>
+      <div className="grid h-full grid-cols-2 divide-x divide-terminal-border">
+        <MoversList list={gainers} />
+        <MoversList list={losers} />
+      </div>
+    </Panel>
+  );
+}
+
+function MoversList({ list }: { list: MoverItem[] }) {
+  return (
+    <div className="flex h-full flex-col justify-center gap-1 px-2 py-1 font-mono text-[10px]">
+      {list.length === 0 ? (
+        <span className="px-1 text-terminal-dim">Loading...</span>
+      ) : (
+        list.map((m, i) => (
+          <div key={m.symbol} className="flex items-center gap-1.5">
+            <span className="w-3 flex-none text-terminal-dim">{i + 1}</span>
+            <span className="flex-1 truncate font-bold text-terminal-text">{m.symbol}</span>
+            <span className={`w-12 flex-none text-right font-bold ${m.changePct >= 0 ? 'text-terminal-up' : 'text-terminal-down'}`}>
+              {m.changePct >= 0 ? '+' : ''}
+              {m.changePct.toFixed(2)}%
+            </span>
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
+/** Real "most active by traded value" (price × volume) from the same
+ *  Nifty 50 batch fetch — fills the row freed up by combining
+ *  gainers/losers, without inventing a separate options/IPO feed we
+ *  can't back with a free, reliable live source. */
+function MostActivePanel() {
+  const { data: movers } = useMovers();
+  const list: MoverItem[] = movers?.mostActive ?? [];
+
+  return (
+    <Panel title="MOST ACTIVE (BY VALUE)" className="min-h-0 overflow-hidden" right={<span className="font-mono text-[9px] text-terminal-dim">NIFTY 50</span>}>
       <div className="flex h-full flex-col justify-center gap-1 px-2 py-1 font-mono text-[11px]">
         {list.length === 0 ? (
           <span className="px-1 text-terminal-dim">Loading...</span>

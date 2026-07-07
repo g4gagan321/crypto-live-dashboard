@@ -26,7 +26,7 @@ export function NiftyHeatmap() {
           Loading constituents...
         </div>
       ) : (
-        <div className="grid h-full auto-rows-fr grid-cols-7 gap-1 p-1.5">
+        <div className="grid h-full auto-rows-fr grid-cols-9 gap-1 overflow-hidden p-1.5">
           {stocks.map((s) => (
             <HeatCell key={s.symbol} symbol={s.symbol} changePct={s.changePct} price={s.price} />
           ))}
@@ -53,10 +53,10 @@ function HeatCell({ symbol, changePct, price }: { symbol: string; changePct: num
       style={{ backgroundColor: bg }}
       title={price ? `${symbol}: ₹${price.toLocaleString('en-IN')}` : symbol}
     >
-      <span className="truncate text-[11px] font-bold text-white">
+      <span className="truncate text-[10px] font-bold text-white">
         {symbol}
       </span>
-      <span className="mono-nums text-[10px] font-semibold text-white">
+      <span className="mono-nums text-[9px] font-semibold text-white">
         {positive ? '+' : ''}
         {changePct.toFixed(2)}%
       </span>
